@@ -8,13 +8,18 @@ export class PaymentsService {
 
     constructor(private http: HttpClient) { }
 
-
     // returns payment intent response
-
     initializePayment(paymentIntent: PaymentIntent) {
         return this.http.post(`https://localhost:5001/api/payments/InitializePaymnet`, paymentIntent)
             .pipe(map((response: any) => {
                 return response.client_secret;
+            }));
+    }
+
+    createStripeCustomer() {
+        return this.http.post(`https://localhost:5001/api/payments/InitializePaymnet`, 0)
+            .pipe(map((response: any) => {
+                return response;
             }));
     }
 }

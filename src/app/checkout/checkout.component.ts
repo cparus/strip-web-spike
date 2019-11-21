@@ -18,6 +18,10 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
   cardFieldEmpty: boolean;
   cardErrors: string;
 
+  paymentType: number;
+
+  email: string;
+
   stripe;
   card;
 
@@ -26,12 +30,16 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
   constructor(private paymentsService: PaymentsService) { }
 
   ngOnInit() {
+    this.paymentType = 0;
+    this.initVariables();
+  }
+
+  initVariables() {
+    this.cardFieldEmpty = true;
     this.paymentIntent = { Amount: null, Currency: '' };
   }
 
   ngAfterViewInit() {
-    this.cardFieldEmpty = true;
-
     this.stripe = Stripe('pk_test_yrwCXVF8CtZM1xR9tp4IEW9700MuZEZs5p');
     const elements = this.stripe.elements();
 
@@ -51,9 +59,37 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // for one time payments just send off payment
+  // for subscriptions create payment method and user first
+  submitPayment() {
+    if (this.paymentType === 0) {
+      this.confirmCardPayment();
+    } else {
+      this.createPaymentMethod();
+    }
+  }
+
+  createPaymentMethod() {
+    this.stripe.createPaymentMethod('card', this.card, {
+      billing_details: {
+        email: this.email,
+      },
+    }).then((result) => {
+      if (result.error) {
+        console.log(result);
+      } else {
+        console.log(result);
+      }
+    });
+  }
+
+  togglePaymentOptions() {
+    this.initVariables();
+  }
+
   // returns payment_intent object we can monitor the payment_intent.succeeded hook to determine when we need to fullfill the customer's order
-  async submitPayment() {
-    await this.stripe.confirmCardPayment(
+  confirmCardPayment() {
+    this.stripe.confirmCardPayment(
       this.clientSecret,
       {
         payment_method: { card: this.card }

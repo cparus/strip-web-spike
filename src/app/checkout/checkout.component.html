@@ -3,7 +3,8 @@
     <div class="radios">
         <div class="radio">
             <label style="cursor: pointer;">
-                <input type="radio" name="paymentType" value="0" style="cursor: pointer;">
+                <input type="radio" name="paymentType" [value]="0" style="cursor: pointer;" [(ngModel)]="paymentType"
+                    (ngModelChange)="togglePaymentOptions()">
                 <span>
                     One-Time Payment
                 </span>
@@ -11,7 +12,8 @@
         </div>
         <div class="radio">
             <label style="cursor: pointer;">
-                <input type="radio" name="paymentType" value="1" style="cursor: pointer;">
+                <input type="radio" name="paymentType" [value]="1" style="cursor: pointer;" [(ngModel)]="paymentType"
+                    (ngModelChange)="togglePaymentOptions()">
                 <span>
                     Subscription
                 </span>
@@ -19,8 +21,15 @@
         </div>
     </div>
 
-    <div class="payment-info">
+    <div class="payment-info" *ngIf="paymentType===1">
         <label for="email">
+            Email
+        </label>
+        <input id="email" name="email" placeholder="email" [(ngModel)]="email" class="form-input">
+    </div>
+
+    <div class="payment-info" *ngIf="paymentType===0">
+        <label for="amount">
             Payment Amount
         </label>
         <input id="amount" name="amount" type="number" placeholder="0.00" (blur)="sendPaymentIntent()"
