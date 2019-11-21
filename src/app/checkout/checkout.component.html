@@ -1,10 +1,30 @@
 <form #paymentForm="ngForm">
+
+    <div class="radios">
+        <div class="radio">
+            <label>
+                <input type="radio" name="paymentType" value="0">
+                <span>
+                    One-Time Payment
+                </span>
+            </label>
+        </div>
+        <div class="radio">
+            <label>
+                <input type="radio" name="paymentType" value="1">
+                <span>
+                    Subscription
+                </span>
+            </label>
+        </div>
+    </div>
+
     <div class="payment-info">
         <label for="email">
             Payment Amount
         </label>
         <input id="amount" name="amount" type="number" placeholder="0.00" (blur)="sendPaymentIntent()"
-            [(ngModel)]="paymentIntent.Amount">
+            [(ngModel)]="paymentIntent.Amount" class="form-input">
     </div>
 
     <div class="form-row">

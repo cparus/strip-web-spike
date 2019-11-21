@@ -41,7 +41,7 @@
 
   // this styles the inputes
 
-  input,.StripeElement {
+  .form-input,.StripeElement {
     border: 1px solid #ccc;
     box-sizing: border-box;
   
@@ -58,7 +58,7 @@
     transition: box-shadow 150ms ease;
   }
   
-  input:focus,.StripeElement--focus {
+  .form-input:focus,.StripeElement--focus {
     box-shadow: 0 1px 3px 0 #cfd7df;
   }
   
@@ -85,4 +85,19 @@ button[disabled] {
   display: flex;
   justify-content: center;
   color: green;
+}
+
+.radios {
+  // padding-bottom: 8px;
+}
+
+.radio {
+  padding-bottom: 20px;
+  label {
+    display: flex;
+    align-items: center;
+    span {
+      padding-left: 10px;
+    }
+  }
 }
