@@ -75,3 +75,14 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none; 
   margin: 0; 
 }
+
+button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.confirmation {
+  display: flex;
+  justify-content: center;
+  color: green;
+}
