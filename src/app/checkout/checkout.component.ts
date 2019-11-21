@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnInit } from '@angular/core';
+import { PaymentIntent } from '../models/PaymentIntent';
 
 declare var Stripe;
 
@@ -8,7 +9,9 @@ declare var Stripe;
   styleUrls: ['./checkout.component.scss']
 })
 
-export class CheckoutComponent implements AfterViewInit {
+export class CheckoutComponent implements OnInit, AfterViewInit {
+
+  paymentIntent: PaymentIntent;
 
   stripe;
   card;
@@ -17,6 +20,10 @@ export class CheckoutComponent implements AfterViewInit {
   @ViewChild('cardElement', { static: false }) cardElement: ElementRef;
 
   constructor() { }
+
+  ngOnInit() {
+    this.paymentIntent = { Amount: null, Currency: ''}
+  }
 
   ngAfterViewInit() {
 
@@ -31,6 +38,9 @@ export class CheckoutComponent implements AfterViewInit {
     });
   }
 
+  sendPaymentIntent() {
+    this.paymentIntent.Currency = 'usd';
+  }
 
   async submitPayment() {
     const { token, error } = await this.stripe.createToken(this.card);

@@ -4,7 +4,7 @@
         <label for="email">
             Payment Amount
         </label>
-        <input id="amount" name="amount" type="number" placeholder="0.00">
+        <input id="amount" name="amount" type="number" placeholder="0.00" (blur)="sendPaymentIntent()" [(ngModel)]="paymentIntent.Amount">
     </div>
 
     <div class="form-row">
