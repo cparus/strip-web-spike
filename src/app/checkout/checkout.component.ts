@@ -51,6 +51,7 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // returns payment_intent object we can monitor the payment_intent.succeeded hook to determine when we need to fullfill the customer's order
   async submitPayment() {
     await this.stripe.confirmCardPayment(
       this.clientSecret,
