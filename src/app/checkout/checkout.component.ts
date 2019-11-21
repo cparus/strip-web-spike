@@ -14,14 +14,11 @@ export class CheckoutComponent implements AfterViewInit {
   card;
   cardErrors;
 
-  @ViewChild('cardElement', {static: false}) cardElement: ElementRef;
+  @ViewChild('cardElement', { static: false }) cardElement: ElementRef;
 
   constructor() { }
 
   ngAfterViewInit() {
-
-    console.log(this.cardElement)
-
 
     this.stripe = Stripe('pk_test_yrwCXVF8CtZM1xR9tp4IEW9700MuZEZs5p');
     const elements = this.stripe.elements();
@@ -30,8 +27,19 @@ export class CheckoutComponent implements AfterViewInit {
     this.card.mount(this.cardElement.nativeElement);
 
     this.card.addEventListener('change', ({ error }) => {
-        this.cardErrors = error && error.message;
+      this.cardErrors = error && error.message;
     });
+  }
+
+
+  async submitPayment() {
+    const { token, error } = await this.stripe.createToken(this.card);
+    if (error) {
+      console.log('Something is wrong:', error);
+    } else {
+      console.log('Success!', token);
+      // ...send the token to the your backend to process the charge
+    }
   }
 
 }
