@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, OnInit } from '@angular/core';
-import { PaymentIntent } from '../models/PaymentIntent';
+import { PaymentIntent } from '../core/models/PaymentIntent';
+import { PaymentsService } from '../core/services/payments.service';
 
 declare var Stripe;
 
@@ -12,6 +13,8 @@ declare var Stripe;
 export class CheckoutComponent implements OnInit, AfterViewInit {
 
   paymentIntent: PaymentIntent;
+  clientSecret: string;
+  responeMessage: string;
 
   stripe;
   card;
@@ -19,14 +22,13 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
 
   @ViewChild('cardElement', { static: false }) cardElement: ElementRef;
 
-  constructor() { }
+  constructor(private paymentsService: PaymentsService) { }
 
   ngOnInit() {
-    this.paymentIntent = { Amount: null, Currency: ''}
+    this.paymentIntent = { Amount: null, Currency: '' };
   }
 
   ngAfterViewInit() {
-
     this.stripe = Stripe('pk_test_yrwCXVF8CtZM1xR9tp4IEW9700MuZEZs5p');
     const elements = this.stripe.elements();
 
@@ -40,16 +42,28 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
 
   sendPaymentIntent() {
     this.paymentIntent.Currency = 'usd';
+    this.paymentsService.initializePayment(this.paymentIntent).subscribe((x) => this.clientSecret = x);
   }
 
   async submitPayment() {
-    const { token, error } = await this.stripe.createToken(this.card);
-    if (error) {
-      console.log('Something is wrong:', error);
-    } else {
-      console.log('Success!', token);
-      // ...send the token to the your backend to process the charge
-    }
+    await this.stripe.confirmCardPayment(
+      this.clientSecret,
+      {
+        payment_method: { card: this.card }
+      }
+    ).then((result) => {
+      if (result.error) {
+        // console.log(result.error);
+        this.responeMessage = result.paymentIntent.status;
+        // Display error.message in your UI.
+      } else {
+        console.log(result);
+        this.responeMessage = result.paymentIntent.status;
+        // console.log('success!');
+        // The payment has succeeded
+        // Display a success message
+      }
+    });
   }
 
 }
