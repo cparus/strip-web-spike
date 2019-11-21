@@ -88,16 +88,15 @@ button[disabled] {
 }
 
 .radios {
-  // padding-bottom: 8px;
-}
-
-.radio {
-  padding-bottom: 20px;
-  label {
-    display: flex;
-    align-items: center;
-    span {
-      padding-left: 10px;
+  .radio {
+    padding-bottom: 20px;
+    label {
+      display: flex;
+      align-items: center;
+      span {
+        padding-left: 10px;
+      }
     }
   }
 }
+
