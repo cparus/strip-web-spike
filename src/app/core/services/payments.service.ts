@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { PaymentIntent } from '../models/PaymentIntent';
+import { PaymentIntentRequest } from '../models/PaymentIntentRequest';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { paymentIntents } from 'stripe';
 
 @Injectable({ providedIn: 'root' })
 export class PaymentsService {
@@ -9,10 +10,10 @@ export class PaymentsService {
     constructor(private http: HttpClient) { }
 
     // returns payment intent response
-    initializePayment(paymentIntent: PaymentIntent) {
+    initializePayment(paymentIntent: PaymentIntentRequest) {
         return this.http.post(`https://localhost:5001/api/payments/InitializePaymnet`, paymentIntent)
-            .pipe(map((response: any) => {
-                return response.client_secret;
+            .pipe(map((response: paymentIntents.IPaymentIntent) => {
+                return response;
             }));
     }
 

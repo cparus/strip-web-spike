@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, OnInit } from '@angular/core';
-import { PaymentIntent } from '../core/models/PaymentIntent';
+import { PaymentIntentRequest } from '../core/models/PaymentIntentRequest';
 import { PaymentsService } from '../core/services/payments.service';
+import { customers, paymentIntents } from 'stripe';
 
 declare var Stripe;
 
@@ -12,7 +13,7 @@ declare var Stripe;
 
 export class CheckoutComponent implements OnInit, AfterViewInit {
 
-  paymentIntent: PaymentIntent;
+  paymentIntent: PaymentIntentRequest;
   clientSecret: string;
   responeMessage: string;
   cardFieldEmpty: boolean;
@@ -55,7 +56,8 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
   sendPaymentIntent() {
     if (this.paymentIntent.Amount) {
       this.paymentIntent.Currency = 'usd';
-      this.paymentsService.initializePayment(this.paymentIntent).subscribe((x) => this.clientSecret = x);
+      this.paymentsService.initializePayment(this.paymentIntent)
+        .subscribe((x: paymentIntents.IPaymentIntent) => this.clientSecret = x.client_secret);
     }
   }
 

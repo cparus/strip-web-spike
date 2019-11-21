@@ -1,4 +1,4 @@
-export interface PaymentIntent {
+export interface PaymentIntentRequest {
     Amount: number;
     Currency: string;
 }
