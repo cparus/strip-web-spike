@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { paymentIntents, plans } from 'stripe';
 import { CreateStripeCustomerRequest } from '../models/CreateStripeCustomerRequest';
+import { CreateSubscriptionRequest } from '../models/CreateSubscriptionRequest';
 
 @Injectable({ providedIn: 'root' })
 export class PaymentsService {
@@ -31,5 +32,12 @@ export class PaymentsService {
                 console.log(response);
                 return response.data;
             }));
+    }
+
+    createSubscription(request: CreateSubscriptionRequest) {
+        return this.http.post(`https://localhost:5001/api/payments/CreateSubscription`, request)
+        .pipe(map((response: any) => {
+            return response;
+        }));
     }
 }

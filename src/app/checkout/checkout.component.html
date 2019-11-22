@@ -21,9 +21,10 @@
         </div>
     </div>
 
-    <div *ngIf="formState === 1">
-        <select>
-            <option *ngFor="let plan of subscriptionPlans">
+    <div class="payment-info" *ngIf="formState === 1">
+        <label>Subscription Plan</label>
+        <select style="width: 100%; height: 30px;" [(ngModel)]="selectedPlan" name="selectedPlan"> 
+            <option *ngFor="let plan of subscriptionPlans" [ngValue]="plan">
                 {{plan.nickname}}
             </option>
         </select>
@@ -54,9 +55,12 @@
         <!-- Used to display form errors. -->
         <div id="card-errors" role="alert"></div>
     </div>
-    <button [disabled]="!card || cardFieldEmpty"
-        (click)="submitPayment()">{{paymentType === 0 ? 'Submit Payment' : 'Submit Payment Method'}}</button>
+    <button *ngIf="formState === 0" [disabled]="!card || cardFieldEmpty" (click)="submitPayment()">{{paymentType === 0 ? 'Submit Payment' : 'Submit Payment Method'}}</button>
+    <button *ngIf="formState === 1" (click)="purchaseSubscription()">Confirm Subscription</button>
+
 </form>
+
+<div *ngIf="processingRequest" class="lds-ring"><div></div><div></div><div></div><div></div></div>
 
 <div class="confirmation" *ngIf="responeMessage">
     {{responeMessage}}!!!
