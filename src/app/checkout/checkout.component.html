@@ -1,6 +1,6 @@
 <form #paymentForm="ngForm">
 
-    <div class="radios">
+    <div class="radios" *ngIf="formState===0">
         <div class="radio">
             <label style="cursor: pointer;">
                 <input type="radio" name="paymentType" [value]="0" style="cursor: pointer;" [(ngModel)]="paymentType"
@@ -21,22 +21,26 @@
         </div>
     </div>
 
-    <div class="payment-info" *ngIf="paymentType===1">
+    <div *ngIf="formState === 0">
+
+    </div>
+
+    <div class="payment-info" *ngIf="paymentType===1 && formState === 0">
         <label for="email">
             Email
         </label>
         <input id="email" name="email" placeholder="email" [(ngModel)]="email" class="form-input">
     </div>
 
-    <div class="payment-info" *ngIf="paymentType===0">
+    <div class="payment-info" *ngIf="paymentType===0 && formState === 0">
         <label for="amount">
             Payment Amount
         </label>
         <input id="amount" name="amount" type="number" placeholder="0.00" (blur)="sendPaymentIntent()"
-            [(ngModel)]="paymentIntent.Amount" class="form-input">
+            [(ngModel)]="paymentIntentRequest.Amount" class="form-input">
     </div>
 
-    <div class="form-row">
+    <div class="form-row" *ngIf="formState === 0">
         <label for="cardElement" style="display: flex; padding-bottom: 8px;">
             Card Info
         </label>
@@ -46,7 +50,7 @@
         <!-- Used to display form errors. -->
         <div id="card-errors" role="alert"></div>
     </div>
-    <button [disabled]="!card || cardFieldEmpty" (click)="submitPayment()">Submit Payment</button>
+    <button [disabled]="!card || cardFieldEmpty" (click)="submitPayment()">{{paymentType === 0 ? 'Submit Payment' : 'Submit Payment Method'}}</button>
 </form>
 
 <div class="confirmation" *ngIf="responeMessage">

@@ -1,7 +1,8 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, OnInit } from '@angular/core';
 import { PaymentIntentRequest } from '../core/models/PaymentIntentRequest';
 import { PaymentsService } from '../core/services/payments.service';
-import { customers, paymentIntents } from 'stripe';
+import { customers, paymentIntents, plans } from 'stripe';
+import { CreateStripeCustomerRequest } from '../core/models/CreateStripeCustomerRequest';
 
 declare var Stripe;
 
@@ -13,12 +14,18 @@ declare var Stripe;
 
 export class CheckoutComponent implements OnInit, AfterViewInit {
 
-  paymentIntent: PaymentIntentRequest;
+  paymentIntentRequest: PaymentIntentRequest;
+  createStripeCustomerRequest: CreateStripeCustomerRequest;
   clientSecret: string;
   responeMessage: string;
   cardFieldEmpty: boolean;
   cardErrors: string;
+  stripeCustomer: customers.ICustomer;
+  subscriptionPlans: plans.IPlan[];
 
+  // 0 for submitting card payments, 1 for selecting subscription
+  formState: number;
+  // 0 for one-time payments, 1 for subscriptions
   paymentType: number;
 
   email: string;
@@ -32,12 +39,14 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.paymentType = 0;
+    this.formState = 0;
     this.initVariables();
   }
 
   initVariables() {
     this.cardFieldEmpty = true;
-    this.paymentIntent = { Amount: null, Currency: '' };
+    this.paymentIntentRequest = { Amount: null, Currency: '' };
+    this.createStripeCustomerRequest = { Email: '', PaymentMethod: '' };
   }
 
   ngAfterViewInit() {
@@ -54,15 +63,15 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
   }
 
   sendPaymentIntent() {
-    if (this.paymentIntent.Amount) {
-      this.paymentIntent.Currency = 'usd';
-      this.paymentsService.initializePayment(this.paymentIntent)
+    if (this.paymentIntentRequest.Amount) {
+      this.paymentIntentRequest.Currency = 'usd';
+      this.paymentsService.initializePayment(this.paymentIntentRequest)
         .subscribe((x: paymentIntents.IPaymentIntent) => this.clientSecret = x.client_secret);
     }
   }
 
   // for one time payments just send off payment
-  // for subscriptions create payment method and user first
+  // for subscriptions create payment method and user in stripe first
   submitPayment() {
     if (this.paymentType === 0) {
       this.confirmCardPayment();
@@ -78,9 +87,18 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
       },
     }).then((result) => {
       if (result.error) {
-        console.log(result);
+        // console.log(result);
       } else {
-        console.log(result);
+        this.createStripeCustomerRequest.Email = this.email;
+        this.createStripeCustomerRequest.PaymentMethod = result.paymentMethod.id;
+
+        this.paymentsService.createStripeCustomer(this.createStripeCustomerRequest)
+          .subscribe((x: customers.ICustomer) =>  {  this.stripeCustomer = x;
+            this.paymentsService.getSubscriptionPlans().subscribe((x: plans.IPlan[]) => { this.subscriptionPlans = x;
+            console.log(this.subscriptionPlans);
+            this.formState++;
+          });
+          });
       }
     });
   }
