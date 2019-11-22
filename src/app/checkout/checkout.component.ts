@@ -5,7 +5,6 @@ import { customers, paymentIntents, plans, subscriptions, subscriptionItems } fr
 import { CreateStripeCustomerRequest } from '../core/models/CreateStripeCustomerRequest';
 import { CreateSubscriptionRequest } from '../core/models/CreateSubscriptionRequest';
 
-
 declare var Stripe;
 
 @Component({
